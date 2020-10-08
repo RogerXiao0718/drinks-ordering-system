@@ -48,9 +48,9 @@ namespace WpfApp1
             int[] prices_arr = { };
             List<string> drinks = new List<string>(drinks_arr);
             List<int> prices = new List<int>(prices_arr);
-            Binding bind = new Binding('value');
-
-            BindingOperations.SetBinding(lbl, ContentProperty, );
+            Binding bind = new Binding("value");
+            bind.Source = sd;
+            BindingOperations.SetBinding(lbl, ContentProperty, bind);
         }
     }
 }
