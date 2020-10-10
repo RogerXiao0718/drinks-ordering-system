@@ -50,7 +50,33 @@ namespace WpfApp1
         private void Checkin_Click(object sender, RoutedEventArgs e)
         {
             string output = "";
+            int totalCost = 0;
+            output += $"{input_name.Text} 先生/小姐 您好\n";
+            output += $"您要{takeout}飲料，清單如下:\n";
+            for (int i = 0; i < orders.Count; i++)
+            {
+                output += $"第{i+1}項: {drinks[orders[i].Index].Name}{orders[i].Quantity}杯" +
+                    $"，每杯{drinks[orders[i].Index].Price}元" +
+                    $"，總共{orders[i].Cost}元\n";
+                totalCost += orders[i].Cost;
+            }
+            output += $"總價{totalCost}元";
+            if (totalCost >= 500)
+            {
+                totalCost = (int)(totalCost * 0.8);
+                output += $"，消費超過500元打8折，售價{totalCost}元";
+            }
+            else if (totalCost >= 300)
+            {
+                totalCost = (int)(totalCost * 0.85);
+                output += $"消費超過300元打85折，售價{totalCost}元";
+            }
+            else if (totalCost >= 200) {
+                totalCost = (int)(totalCost * 0.9);
+                output += $"消費超過200元打9折，售價{totalCost}元";
+            }
 
+            outputBlock.Text = output;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -74,20 +100,44 @@ namespace WpfApp1
                 thick.Right = 10;
                 cb.Margin = thick;
                 AddClickHandlerForCb(i, cb, sd);
-                sd.Width = 150;
-                sd.Maximum = 10;
-                sd.Minimum = 0;
-                sd.TickFrequency = 1;
-                sd.IsSnapToTickEnabled = true;
-                Binding bind = new Binding("Value");
-                bind.Source = sd;
-                lbl.SetBinding(ContentProperty, bind);
+                SetPropertyForSd(sd);
+                AddValueChangedForSd(i, sd, cb);
+                ImplementDataBindingForSdAndLbl(sd, lbl);
                 pl.Children.Add(cb);
                 pl.Children.Add(sd);
                 pl.Children.Add(lbl);
                 sp_menu.Children.Add(pl);
             }
 
+        }
+
+        private static void ImplementDataBindingForSdAndLbl(Slider sd, Label lbl)
+        {
+            Binding bind = new Binding("Value");
+            bind.Source = sd;
+            lbl.SetBinding(ContentProperty, bind);
+        }
+
+        private static void SetPropertyForSd(Slider sd)
+        {
+            sd.Width = 150;
+            sd.Maximum = 10;
+            sd.Minimum = 0;
+            sd.TickFrequency = 1;
+            sd.IsSnapToTickEnabled = true;
+        }
+
+        private static void AddValueChangedForSd(int i, Slider sd, CheckBox cb)
+        {
+            sd.ValueChanged += (sender, e) =>
+            {
+                Slider slider = (Slider)sender;
+                int value = (int)slider.Value;
+                if (cb.IsChecked == true)
+                {
+                    orders.Find(o => o.Index == i).Quantity = value;
+                }
+            };
         }
 
         private static void AddClickHandlerForCb(int i, CheckBox cb, Slider sd)
@@ -125,13 +175,12 @@ namespace WpfApp1
         {
             public int Index { get; set; }
             public int Quantity { get; set; }
-            public int Cost { get; }
+            public int Cost { get => drinks[Index].Price * Quantity; }
 
             public OrderItem(int index, int quantity)
             {
                 Index = index;
                 Quantity = quantity;
-                Cost = drinks[index].Price * quantity;
             }
         }
     }

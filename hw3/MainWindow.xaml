@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp1"
         mc:Ignorable="d"
-        Title="MainWindow" Height="431.4" Width="753.2" ResizeMode="NoResize" Loaded="Window_Loaded" Background="#FFBCC1D6">
+        Title="4A8G0105蕭立淮" Height="431.4" Width="753.2" ResizeMode="NoResize" Loaded="Window_Loaded" Background="#FFBCC1D6">
     <Grid>
         <GroupBox Header="內用/外帶" HorizontalAlignment="Left" Height="75" Margin="40,43,0,0" VerticalAlignment="Top" Width="390" Background="#FFDDEAA6">
             <StackPanel HorizontalAlignment="Left" Height="50" Margin="20,0,-1.6,0" VerticalAlignment="Top" Width="360">
@@ -17,9 +17,9 @@
             <StackPanel x:Name="sp_menu" HorizontalAlignment="Left" Height="210" Margin="10,20,0,0" VerticalAlignment="Top" Width="355"/>
         </GroupBox>
         <Button x:Name="checkin_btn" Content="確定訂購" HorizontalAlignment="Left" Margin="470,55,0,0" VerticalAlignment="Top" Width="240" Height="63" Click="Checkin_Click"/>
-        <TextBlock x:Name="ouputBlock" HorizontalAlignment="Left" Margin="470,135,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="250" Width="240" Background="#FF95F2F7"/>
+        <TextBlock x:Name="outputBlock" HorizontalAlignment="Left" Margin="470,135,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="250" Width="240" Background="#FF95F2F7"/>
         <Label Content="請輸入顧客姓名：" HorizontalAlignment="Left" Margin="50,10,0,0" VerticalAlignment="Top" Width="100"/>
-        <TextBox x:Name="textbox_name" HorizontalAlignment="Left" Height="23" Margin="155,14,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="210" VerticalContentAlignment="Center" Background="#FFF6E9E9"/>
+        <TextBox x:Name="input_name" HorizontalAlignment="Left" Height="23" Margin="155,14,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="210" VerticalContentAlignment="Center" Background="#FFF6E9E9"/>
         <TextBlock x:Name="textblock_name" HorizontalAlignment="Left" Margin="405,14,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="24" Width="305" FontSize="14" FontWeight="Bold" Foreground="#FFFC1B1B" Text="{Binding Text, ElementName=textbox_name}"/>
 
     </Grid>
