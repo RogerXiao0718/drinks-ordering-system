@@ -20,13 +20,24 @@ namespace WpfApp1
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string takeout;
+        private string takeout = "";
+        private static Drink[] drinks =
+            {
+                new Drink("咖啡大杯", 60),
+                new Drink("咖啡中杯", 50),
+                new Drink("紅茶大杯", 30),
+                new Drink("紅茶中杯", 20),
+                new Drink("綠茶大杯", 25),
+                new Drink("綠茶中杯", 20),
+            };
+        private static List<OrderItem> orders = new List<OrderItem>();
+        
         public MainWindow()
         {
             InitializeComponent();
         }
 
-        private void InRadioButton_Checked(object sender, RoutedEventArgs e)
+        private void radiobutton_Checked(object sender, RoutedEventArgs e)
         {
             RadioButton rb = (RadioButton)sender;
             if (rb.IsChecked == true)
@@ -36,21 +47,93 @@ namespace WpfApp1
 
         }
 
+        private void Checkin_Click(object sender, RoutedEventArgs e)
+        {
+            string output = "";
+
+        }
+
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            StackPanel pl = new StackPanel();
-            pl.Orientation = Orientation.Horizontal;
+            
+            InitializeSpMenu(drinks);
+            
+        }
 
-            CheckBox cb = new CheckBox();
-            Slider sd = new Slider();
-            Label lbl = new Label();
-            string[] drinks_arr = { "咖啡大杯", "咖啡中杯", "紅茶大杯", "紅茶中杯", "綠茶大杯", "綠茶中杯" };
-            int[] prices_arr = { };
-            List<string> drinks = new List<string>(drinks_arr);
-            List<int> prices = new List<int>(prices_arr);
-            Binding bind = new Binding("value");
-            bind.Source = sd;
-            BindingOperations.SetBinding(lbl, ContentProperty, bind);
+        private void InitializeSpMenu(Drink[] drinks)
+        {
+            for (int i = 0; i < drinks.Length; i++)
+            {
+                StackPanel pl = new StackPanel();
+                pl.Orientation = Orientation.Horizontal;
+                CheckBox cb = new CheckBox();
+                Slider sd = new Slider();
+                Label lbl = new Label();
+                cb.Content = $"{drinks[i].Name}{drinks[i].Price}元";
+                Thickness thick = new Thickness();
+                thick.Right = 10;
+                cb.Margin = thick;
+                AddClickHandlerForCb(i, cb, sd);
+                sd.Width = 150;
+                sd.Maximum = 10;
+                sd.Minimum = 0;
+                sd.TickFrequency = 1;
+                sd.IsSnapToTickEnabled = true;
+                Binding bind = new Binding("Value");
+                bind.Source = sd;
+                lbl.SetBinding(ContentProperty, bind);
+                pl.Children.Add(cb);
+                pl.Children.Add(sd);
+                pl.Children.Add(lbl);
+                sp_menu.Children.Add(pl);
+            }
+
+        }
+
+        private static void AddClickHandlerForCb(int i, CheckBox cb, Slider sd)
+        {
+            cb.Click += (sender, e) =>
+            {
+                CheckBox checkbox = (CheckBox)sender;
+                if (checkbox.IsChecked == true)
+                {
+                    orders.Add(new OrderItem(i, (int)sd.Value));
+                }
+                else
+                {
+                    orders = orders.FindAll((order) =>
+                    {
+                        if (order.Index != i) return true;
+                        else return false;
+                    });
+                }
+            };
+        }
+
+        private class Drink
+        {
+            public string Name { get; set; }
+            public int Price { get; set; }
+
+            public Drink(string name, int price)
+            {
+                Name = name;
+                Price = price;
+            }
+        }
+        private class OrderItem
+        {
+            public int Index { get; set; }
+            public int Quantity { get; set; }
+            public int Cost { get; }
+
+            public OrderItem(int index, int quantity)
+            {
+                Index = index;
+                Quantity = quantity;
+                Cost = drinks[index].Price * quantity;
+            }
         }
     }
+    
 }
