@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using OpenFileDialog = System.Windows.Forms.OpenFileDialog;
+using CsvHelper;
 
 namespace WpfApp1
 {
@@ -81,11 +83,13 @@ namespace WpfApp1
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            
             InitializeSpMenu(drinks);
             
         }
 
+        private static void ReadDrinks()
+        {
+        }
         private void InitializeSpMenu(Drink[] drinks)
         {
             for (int i = 0; i < drinks.Length; i++)
