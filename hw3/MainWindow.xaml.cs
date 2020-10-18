@@ -14,6 +14,9 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using OpenFileDialog = System.Windows.Forms.OpenFileDialog;
 using CsvHelper;
+using System.Media;
+using System.IO;
+using System.Globalization;
 
 namespace WpfApp1
 {
@@ -25,12 +28,12 @@ namespace WpfApp1
         private string takeout = "";
         private static Drink[] drinks =
             {
-                new Drink("咖啡大杯", 60),
-                new Drink("咖啡中杯", 50),
-                new Drink("紅茶大杯", 30),
-                new Drink("紅茶中杯", 20),
-                new Drink("綠茶大杯", 25),
-                new Drink("綠茶中杯", 20),
+                new Drink("咖啡", "大杯", 60),
+                new Drink("咖啡", "中杯", 50),
+                new Drink("紅茶", "大杯", 30),
+                new Drink("紅茶", "中杯", 20),
+                new Drink("綠茶", "大杯", 25),
+                new Drink("綠茶", "中杯", 20),
             };
         private static List<OrderItem> orders = new List<OrderItem>();
         
@@ -57,7 +60,7 @@ namespace WpfApp1
             output += $"您要{takeout}飲料，清單如下:\n";
             for (int i = 0; i < orders.Count; i++)
             {
-                output += $"第{i+1}項: {drinks[orders[i].Index].Name}{orders[i].Quantity}杯" +
+                output += $"第{i+1}項: {drinks[orders[i].Index].Name + drinks[orders[i].Index].Size}{orders[i].Quantity}杯" +
                     $"，每杯{drinks[orders[i].Index].Price}元" +
                     $"，總共{orders[i].Cost}元\n";
                 totalCost += orders[i].Cost;
@@ -89,7 +92,18 @@ namespace WpfApp1
 
         private static void ReadDrinks()
         {
-        }
+            OpenFileDialog fileDialog = new OpenFileDialog();
+            fileDialog.Filter = "csv files (*.csv)|*.csv|All files (*.*)|*.*";
+            if(fileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                string fileName = fileDialog.FileName;
+                using (StreamReader reader = new StreamReader(fileName))
+                using (CsvReader csvReader = new CsvReader(reader, CultureInfo.InvariantCulture))
+                {
+                    drinks = csvReader.GetRecords<Drink>() as Drink[];
+                }
+            }
+        }   
         private void InitializeSpMenu(Drink[] drinks)
         {
             for (int i = 0; i < drinks.Length; i++)
@@ -99,7 +113,7 @@ namespace WpfApp1
                 CheckBox cb = new CheckBox();
                 Slider sd = new Slider();
                 Label lbl = new Label();
-                cb.Content = $"{drinks[i].Name}{drinks[i].Price}元";
+                cb.Content = $"{drinks[i].Name}{drinks[i].Size}{drinks[i].Price}元";
                 Thickness thick = new Thickness();
                 thick.Right = 10;
                 cb.Margin = thick;
@@ -167,11 +181,14 @@ namespace WpfApp1
         private class Drink
         {
             public string Name { get; set; }
+
+            public string Size { get; set; }
             public int Price { get; set; }
 
-            public Drink(string name, int price)
+            public Drink(string name, string size, int price)
             {
                 Name = name;
+                Size = size;
                 Price = price;
             }
         }
