@@ -17,6 +17,7 @@ using CsvHelper;
 using System.Media;
 using System.IO;
 using System.Globalization;
+using CsvHelper.Configuration.Attributes;
 
 namespace WpfApp1
 {
@@ -26,15 +27,7 @@ namespace WpfApp1
     public partial class MainWindow : Window
     {
         private string takeout = "";
-        private static Drink[] drinks =
-            {
-                new Drink("咖啡", "大杯", 60),
-                new Drink("咖啡", "中杯", 50),
-                new Drink("紅茶", "大杯", 30),
-                new Drink("紅茶", "中杯", 20),
-                new Drink("綠茶", "大杯", 25),
-                new Drink("綠茶", "中杯", 20),
-            };
+        private static List<Drink> drinks;
         private static List<OrderItem> orders = new List<OrderItem>();
         
         public MainWindow()
@@ -86,27 +79,28 @@ namespace WpfApp1
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            ReadDrinksFromCsv();
             InitializeSpMenu(drinks);
             
         }
 
-        private static void ReadDrinks()
+        private static void ReadDrinksFromCsv()
         {
             OpenFileDialog fileDialog = new OpenFileDialog();
             fileDialog.Filter = "csv files (*.csv)|*.csv|All files (*.*)|*.*";
             if(fileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 string fileName = fileDialog.FileName;
-                using (StreamReader reader = new StreamReader(fileName))
+                using (StreamReader reader = new StreamReader(fileName, Encoding.Default))
                 using (CsvReader csvReader = new CsvReader(reader, CultureInfo.InvariantCulture))
                 {
-                    drinks = csvReader.GetRecords<Drink>() as Drink[];
+                   drinks = csvReader.GetRecords<Drink>().ToList();
                 }
             }
         }   
-        private void InitializeSpMenu(Drink[] drinks)
+        private void InitializeSpMenu(List<Drink> drinks)
         {
-            for (int i = 0; i < drinks.Length; i++)
+            for (int i = 0; i < drinks.Count; i++)
             {
                 StackPanel pl = new StackPanel();
                 pl.Orientation = Orientation.Horizontal;
@@ -183,14 +177,9 @@ namespace WpfApp1
             public string Name { get; set; }
 
             public string Size { get; set; }
+
             public int Price { get; set; }
 
-            public Drink(string name, string size, int price)
-            {
-                Name = name;
-                Size = size;
-                Price = price;
-            }
         }
         private class OrderItem
         {
